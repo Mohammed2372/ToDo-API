@@ -61,6 +61,16 @@ Project idea from: [roadmap.sh/projects/todo-list-api](https://roadmap.sh/projec
 
     The API will be available at `http://127.0.0.1:8000/`.
 
+## Testing
+
+This project includes a comprehensive suite of 15 unit tests to ensure the API is working correctly. The tests cover user authentication, CRUD operations for todos, and security rules to ensure users can only access their own data.
+
+You can see the test functions in [tests.py](todo/tests.py) file, and to run the entire test suite, execute the following command:
+
+```bash
+python manage.py test
+```
+
 ## API Endpoints
 
 Here is a list of the available API endpoints.
