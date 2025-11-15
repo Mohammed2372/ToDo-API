@@ -10,4 +10,9 @@ urlpatterns = [
         views.TodoRetrieveUpdateDestroyAPIView.as_view(),
         name="todo-detail",
     ),
+    path(
+        "todos/<int:todo_id>/complete/",
+        views.TodoCompletedUpdateView.as_view(),
+        name="todo-complete-toggle",
+    ),
 ]
