@@ -6,7 +6,7 @@ from rest_framework.filters import SearchFilter
 from django_filters.rest_framework import DjangoFilterBackend
 
 from .models import Todo
-from .serializers import TodoSerializer
+from .serializers import TodoSerializer, TodoDetailSerializer
 from .filters import TodoFilter
 
 
@@ -34,12 +34,12 @@ class TodoListCreateAPIView(generics.ListCreateAPIView):
 class TodoRetrieveUpdateDestroyAPIView(APIView):
     def get(self, request, todo_id):
         todo = get_object_or_404(Todo, id=todo_id)
-        serializer = TodoSerializer(todo)
+        serializer = TodoDetailSerializer(todo)
         return Response(serializer.data)
 
     def put(self, request, todo_id):
         todo = get_object_or_404(Todo, id=todo_id)
-        serializer = TodoSerializer(instance=todo, data=request.data)
+        serializer = TodoDetailSerializer(instance=todo, data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
