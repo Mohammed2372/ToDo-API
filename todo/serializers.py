@@ -12,7 +12,7 @@ from .models import Todo
 class TodoSerializer(ModelSerializer):
     class Meta:
         model = Todo
-        fields = ["id", "title", "description"]
+        fields = ["id", "title", "description", "completed", "date_created"]
 
 
 class TodoDetailSerializer(ModelSerializer):
