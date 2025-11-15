@@ -39,7 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     
     'rest_framework',
-    'todo',
+    'todo.apps.TodoConfig',
     'django_filters',
     'rest_framework_simplejwt',
 ]
@@ -139,6 +139,19 @@ REST_FRAMEWORK = {
     "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
     "PAGE_SIZE": 10,
     "DEFAULT_FILTER_BACKENDS": ["django_filters.rest_framework.DjangoFilterBackend"],
+    # --- THROTTLING ---
+    "DEFAULT_THROTTLE_CLASSES": [
+        # This one is for anonymous users (e.g., login/register)
+        "rest_framework.throttling.AnonRateThrottle",
+        # This one is for logged-in users
+        "rest_framework.throttling.UserRateThrottle",
+    ],
+    "DEFAULT_THROTTLE_RATES": {
+        # Limit for anonymous users
+        "anon": "20/minute",
+        # Limit for logged-in users
+        "user": "1000/day",
+    },
 }
 
 LOGIN_REDIRECT_URL = '/'

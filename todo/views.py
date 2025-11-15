@@ -4,9 +4,19 @@ from rest_framework.response import Response
 from rest_framework import status, generics, permissions
 from django_filters.rest_framework import DjangoFilterBackend
 from django.contrib.auth.models import User
+from django.contrib.auth import login
+from rest_framework.filters import (
+    SearchFilter,
+    OrderingFilter,
+)
 
 from .models import Todo
-from .serializers import TodoSerializer, TodoDetailSerializer, RegisterSerializer
+from .serializers import (
+    TodoSerializer,
+    TodoDetailSerializer,
+    RegisterSerializer,
+    EmailLoginSerializer,
+)
 from .filters import TodoFilter
 
 
@@ -16,10 +26,20 @@ class TodoListCreateAPIView(generics.ListCreateAPIView):
     # queryset = Todo.objects.all()
     serializer_class = TodoSerializer
     filterset_class = TodoFilter
-    filter_backends = [DjangoFilterBackend]
     permission_classes = [permissions.IsAuthenticated]
+    filter_backends = filter_backends = [
+        DjangoFilterBackend,
+        SearchFilter,
+        OrderingFilter,
+    ]
+
+    search_fields = ["title", "description"]
+    ordering_fields = ["date_created", "title", "completed"]
+    ordering = ["-date_created"]
 
     def get_queryset(self):
+        if self.request.user.is_superuser:
+            return Todo.objects.all()
         return Todo.objects.filter(owner=self.request.user)
 
     def perform_create(self, serializer):
@@ -78,3 +98,18 @@ class RegisterView(generics.CreateAPIView):
     queryset = User.objects.all()
     serializer_class = RegisterSerializer
     permission_classes = [permissions.AllowAny]
+
+
+class EmailLoginView(generics.CreateAPIView):
+    permission_classes = [permissions.AllowAny]
+    serializer_class = EmailLoginSerializer
+
+    def post(self, request, *args, **kwargs):
+        serializer = EmailLoginSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        validated_data = serializer.validated_data
+        user = validated_data.pop("user")
+        login(request, user)
+
+        return Response(serializer.validated_data, status=status.HTTP_200_OK)
